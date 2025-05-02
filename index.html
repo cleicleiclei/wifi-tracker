@@ -6,15 +6,66 @@
   <title>WiFi Instagram Tracker</title>
   <style>
     body {
-      background-color: #0d0d0d;
-      color: #33ff33;
-      font-family: monospace;
-      padding: 2rem;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      text-align: center;
     }
     h1 {
-      color: #ff3333;
+      font-size: 3rem;
+      margin-bottom: 20px;
+      animation: glow 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      0% { text-shadow: 0 0 10px #fff, 0 0 20px #fff; }
+      100% { text-shadow: 0 0 20px #ff007f, 0 0 30px #ff007f; }
+    }
+    #password-screen {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      display: block;
+      width: 80%;
+      max-width: 400px;
+      margin: 20px;
+    }
+    #password-screen input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 1rem;
+      border: 2px solid #ff007f;
+      background-color: #222;
+      color: #fff;
+      border-radius: 5px;
+    }
+    #password-screen button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff007f;
+      border: none;
+      font-size: 1.2rem;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 15px;
+      transition: background 0.3s;
+    }
+    #password-screen button:hover {
+      background-color: #ff005f;
+    }
+    .hidden {
+      display: none;
     }
     .loading {
+      font-size: 1.5rem;
+      margin-top: 20px;
       animation: blink 1s infinite;
     }
     @keyframes blink {
@@ -22,73 +73,81 @@
       50% { opacity: 1; }
       100% { opacity: 0.3; }
     }
+    #results {
+      display: none;
+      margin-top: 30px;
+    }
     .account {
-      margin: 1rem 0;
+      margin: 10px 0;
+      font-size: 1.2rem;
     }
     .new {
-      color: #ffff00;
+      color: #ffdd00;
     }
     .warning {
       color: #ff6600;
     }
-    #results {
-      display: none;
-      margin-top: 2rem;
-    }
-    button {
-      margin-top: 2rem;
-      background-color: #222;
-      color: #33ff33;
-      border: 1px solid #33ff33;
-      padding: 0.5rem 1rem;
-      font-family: monospace;
+    button#restart {
+      background-color: #ff6600;
+      padding: 10px;
+      border: none;
+      font-size: 1.1rem;
+      color: white;
       cursor: pointer;
+      margin-top: 20px;
+      border-radius: 5px;
     }
-    button:hover {
-      background-color: #33ff33;
-      color: #000;
+    button#restart:hover {
+      background-color: #ff4500;
     }
   </style>
 </head>
 <body>
   <h1>WiFi Instagram Tracker</h1>
-  <p id="status">Sistema de rastreamento local — escaneando rede Wi-Fi...</p>
-  <p class="loading">Carregando dados da rede...</p>
 
-  <div id="results">
-    <p class="account new">@biancacarla70 – ⚠ Nova conta conectada — <span class="warning">atividade suspeita detectada</span></p>
+  <div id="password-screen">
+    <p>Digite a senha do roteador para continuar o rastreamento:</p>
+    <input type="password" id="password" placeholder="Senha Wi-Fi" />
+    <button onclick="startScan()">Rastrear Agora</button>
+  </div>
+
+  <div id="loading-screen" class="hidden">
+    <p class="loading">Escaneando rede Wi-Fi...</p>
+  </div>
+
+  <div id="results" class="hidden">
+    <p class="account new">@biancacarla70 – ⚠ Nova conta conectada – <span class="warning">atividade suspeita detectada</span></p>
     <p class="account">@cleiribeiros – <span class="warning">atividade suspeita detectada</span></p>
     <p class="account">@analucia3817 – inativo mas vinculado à rede</p>
     <p class="account">@nc_santos81 – online recentemente</p>
+    <button id="restart" onclick="restartScan()">Rastrear Novamente</button>
   </div>
-
-  <button onclick="restartScan()">Rastrear Novamente</button>
 
   <audio id="alert-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
   <script>
-    const results = document.getElementById("results");
-    const loading = document.querySelector(".loading");
-    const status = document.getElementById("status");
-    const sound = document.getElementById("alert-sound");
+    function startScan() {
+      const password = document.getElementById("password").value;
+      if (password) {
+        document.getElementById("password-screen").classList.add("hidden");
+        document.getElementById("loading-screen").classList.remove("hidden");
+        setTimeout(showResults, 3000); // Simula o tempo de rastreamento
+      } else {
+        alert("Digite a senha para continuar!");
+      }
+    }
 
     function showResults() {
-      loading.style.display = "none";
-      status.textContent = "Conexões detectadas na rede Wi-Fi:";
-      results.style.display = "block";
-      sound.play();
+      document.getElementById("loading-screen").classList.add("hidden");
+      document.getElementById("results").classList.remove("hidden");
+      document.getElementById("alert-sound").play();
     }
 
     function restartScan() {
-      results.style.display = "none";
-      loading.style.display = "block";
-      status.textContent = "Sistema de rastreamento local — escaneando rede Wi-Fi...";
+      document.getElementById("results").classList.add("hidden");
+      document.getElementById("loading-screen").classList.remove("hidden");
       setTimeout(showResults, 3000);
     }
-
-    window.onload = function () {
-      setTimeout(showResults, 3000);
-    };
   </script>
 </body>
 </html>
