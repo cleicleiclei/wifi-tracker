@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WiFi Instagram Tracker</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #33ff33;
+      font-family: monospace;
+      padding: 2rem;
+    }
+    h1 {
+      color: #ff3333;
+    }
+    .loading {
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+    .account {
+      margin: 1rem 0;
+    }
+    .new {
+      color: #ffff00;
+    }
+    .warning {
+      color: #ff6600;
+    }
+    #results {
+      display: none;
+      margin-top: 2rem;
+    }
+    button {
+      margin-top: 2rem;
+      background-color: #222;
+      color: #33ff33;
+      border: 1px solid #33ff33;
+      padding: 0.5rem 1rem;
+      font-family: monospace;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #33ff33;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <h1>WiFi Instagram Tracker</h1>
+  <p id="status">Sistema de rastreamento local — escaneando rede Wi-Fi...</p>
+  <p class="loading">Carregando dados da rede...</p>
+
+  <div id="results">
+    <p class="account new">@biancacarla70 – ⚠ Nova conta conectada — <span class="warning">atividade suspeita detectada</span></p>
+    <p class="account">@cleiribeiros – <span class="warning">atividade suspeita detectada</span></p>
+    <p class="account">@analucia3817 – inativo mas vinculado à rede</p>
+    <p class="account">@nc_santos81 – online recentemente</p>
+  </div>
+
+  <button onclick="restartScan()">Rastrear Novamente</button>
+
+  <audio id="alert-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+
+  <script>
+    const results = document.getElementById("results");
+    const loading = document.querySelector(".loading");
+    const status = document.getElementById("status");
+    const sound = document.getElementById("alert-sound");
+
+    function showResults() {
+      loading.style.display = "none";
+      status.textContent = "Conexões detectadas na rede Wi-Fi:";
+      results.style.display = "block";
+      sound.play();
+    }
+
+    function restartScan() {
+      results.style.display = "none";
+      loading.style.display = "block";
+      status.textContent = "Sistema de rastreamento local — escaneando rede Wi-Fi...";
+      setTimeout(showResults, 3000);
+    }
+
+    window.onload = function () {
+      setTimeout(showResults, 3000);
+    };
+  </script>
+</body>
+</html>
