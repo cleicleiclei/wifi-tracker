@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WiFi Instagram Tracker</title>
   <style>
+    /* Corpo */
     body {
       font-family: 'Arial', sans-serif;
-      background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
+      background-color: #1a1a1a;
       color: #fff;
       display: flex;
       justify-content: center;
@@ -15,112 +16,173 @@
       height: 100vh;
       margin: 0;
       flex-direction: column;
+      background: linear-gradient(135deg, #ff007f, #32cc32);
       text-align: center;
+      overflow: hidden;
     }
+    
+    /* Título principal */
     h1 {
       font-size: 3rem;
       margin-bottom: 20px;
-      animation: glow 1.5s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      0% { text-shadow: 0 0 10px #fff, 0 0 20px #fff; }
-      100% { text-shadow: 0 0 20px #ff007f, 0 0 30px #ff007f; }
-    }
-    #password-screen {
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 10px;
-      display: block;
-      width: 80%;
-      max-width: 400px;
-      margin: 20px;
-    }
-    #password-screen input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 1rem;
-      border: 2px solid #ff007f;
-      background-color: #222;
       color: #fff;
-      border-radius: 5px;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      text-shadow: 0 0 10px #fff, 0 0 20px #ff007f;
+      opacity: 0;
+      animation: fadeIn 2s forwards;
     }
-    #password-screen button {
+
+    @keyframes fadeIn {
+      100% { opacity: 1; }
+    }
+
+    /* Caixa de login */
+    .login-box {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      border-radius: 10px;
       width: 100%;
-      padding: 10px;
-      background-color: #ff007f;
+      max-width: 400px;
+      opacity: 0;
+      animation: fadeInUp 2s forwards;
+    }
+
+    @keyframes fadeInUp {
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    input[type="password"], button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 1rem;
       border: none;
-      font-size: 1.2rem;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    input[type="password"] {
+      background-color: #333;
+      color: #fff;
+      border: 2px solid #ff007f;
+    }
+
+    button {
+      background-color: #ff007f;
       color: white;
       cursor: pointer;
-      border-radius: 5px;
-      margin-top: 15px;
-      transition: background 0.3s;
+      transition: background-color 0.3s, transform 0.2s;
     }
-    #password-screen button:hover {
+
+    button:hover {
       background-color: #ff005f;
+      transform: scale(1.1);
     }
-    .hidden {
-      display: none;
-    }
+
+    /* Tela de carregamento */
     .loading {
+      color: #fff;
       font-size: 1.5rem;
       margin-top: 20px;
       animation: blink 1s infinite;
     }
+
     @keyframes blink {
       0% { opacity: 0.3; }
       50% { opacity: 1; }
       100% { opacity: 0.3; }
     }
-    #results {
-      display: none;
-      margin-top: 30px;
+
+    /* Barra de progresso */
+    #progress-bar {
+      width: 0%;
+      height: 20px;
+      background-color: #ff007f;
+      margin-top: 20px;
+      border-radius: 5px;
+      animation: progress 3s forwards;
     }
+
+    @keyframes progress {
+      100% { width: 100%; }
+    }
+
+    /* Resultados */
+    .results {
+      display: none;
+      margin-top: 40px;
+      text-align: left;
+    }
+
     .account {
       margin: 10px 0;
       font-size: 1.2rem;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
     }
+
     .new {
       color: #ffdd00;
     }
+
     .warning {
       color: #ff6600;
     }
-    button#restart {
+
+    .restart-btn {
       background-color: #ff6600;
       padding: 10px;
-      border: none;
       font-size: 1.1rem;
       color: white;
       cursor: pointer;
       margin-top: 20px;
       border-radius: 5px;
+      transition: background-color 0.3s;
     }
-    button#restart:hover {
+
+    .restart-btn:hover {
       background-color: #ff4500;
+    }
+
+    /* Responsividade */
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .login-box {
+        padding: 20px;
+      }
+
+      input[type="password"], button {
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
+
   <h1>WiFi Instagram Tracker</h1>
 
-  <div id="password-screen">
-    <p>Digite a senha do roteador para continuar o rastreamento:</p>
-    <input type="password" id="password" placeholder="Senha Wi-Fi" />
+  <div id="login-screen" class="login-box">
+    <p>Digite a senha do roteador para iniciar o rastreamento:</p>
+    <input type="password" id="password" placeholder="Senha Wi-Fi">
     <button onclick="startScan()">Rastrear Agora</button>
   </div>
 
   <div id="loading-screen" class="hidden">
-    <p class="loading">Escaneando rede Wi-Fi...</p>
+    <p class="loading">Escaneando a rede Wi-Fi...</p>
+    <div id="progress-bar"></div>
   </div>
 
-  <div id="results" class="hidden">
+  <div id="results" class="results">
     <p class="account new">@biancacarla70 – ⚠ Nova conta conectada – <span class="warning">atividade suspeita detectada</span></p>
     <p class="account">@cleiribeiros – <span class="warning">atividade suspeita detectada</span></p>
     <p class="account">@analucia3817 – inativo mas vinculado à rede</p>
     <p class="account">@nc_santos81 – online recentemente</p>
-    <button id="restart" onclick="restartScan()">Rastrear Novamente</button>
+    <button class="restart-btn" onclick="restartScan()">Rastrear Novamente</button>
   </div>
 
   <audio id="alert-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
@@ -129,9 +191,9 @@
     function startScan() {
       const password = document.getElementById("password").value;
       if (password) {
-        document.getElementById("password-screen").classList.add("hidden");
+        document.getElementById("login-screen").style.display = 'none';
         document.getElementById("loading-screen").classList.remove("hidden");
-        setTimeout(showResults, 3000); // Simula o tempo de rastreamento
+        setTimeout(showResults, 5000); // Simula um tempo maior de rastreamento
       } else {
         alert("Digite a senha para continuar!");
       }
@@ -146,8 +208,9 @@
     function restartScan() {
       document.getElementById("results").classList.add("hidden");
       document.getElementById("loading-screen").classList.remove("hidden");
-      setTimeout(showResults, 3000);
+      setTimeout(showResults, 5000);
     }
   </script>
+
 </body>
 </html>
